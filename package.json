@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "currency exchange system",
   "main": "index.js",
+  "type": "module",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/peterluvCS/currency-exchange-v2/issues"
   },
-  "homepage": "https://github.com/peterluvCS/currency-exchange-v2#readme"
+  "homepage": "https://github.com/peterluvCS/currency-exchange-v2#readme",
+  "dependencies": {
+    "prime-number-check": "^1.0.1"
+  }
 }
