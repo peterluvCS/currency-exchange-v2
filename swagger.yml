@@ -1,0 +1,243 @@
+openapi: 3.0.0
+info:
+  title: Currency Exchange System API
+  version: 1.0.0
+  description: CRUD APIs for users and currencies
+
+servers:
+  - url: http://localhost:3000/api
+
+paths:
+  /users:
+    get:
+      summary: Get all users
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserCreate'
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '201':
+          description: User created
+
+  /users/{id}:
+    get:
+      summary: Get user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreate'
+    put:
+      summary: Update user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: User updated
+    delete:
+      summary: Delete user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User deleted
+
+  /users/search:
+    get:
+      summary: Search users by username
+      parameters:
+        - name: keyword
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserCreate'
+
+  /currencies:
+    get:
+      summary: Get all currencies
+      responses:
+        '200':
+          description: A list of currencies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CurrencyCreate'
+    post:
+      summary: Create a new currency
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CurrencyCreate'
+      responses:
+        '201':
+          description: Currency created
+
+  /currencies/{id}:
+    get:
+      summary: Get currency by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Currency found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrencyCreate'
+    put:
+      summary: Update currency by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CurrencyUpdate'
+      responses:
+        '200':
+          description: Currency updated
+    delete:
+      summary: Delete currency by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Currency deleted
+
+  /currencies/search:
+    get:
+      summary: Search currencies by name
+      parameters:
+        - name: keyword
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching currencies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CurrencyCreate'
+
+components:
+  schemas:
+    UserCreate:
+      type: object
+      required: [email, password_hash, username]
+      properties:
+        email:
+          type: string
+        password_hash:
+          type: string
+        username:
+          type: string
+        role:
+          type: integer
+          enum: [0, 1]
+
+    UserUpdate:
+      type: object
+      properties:
+        email:
+          type: string
+        password_hash:
+          type: string
+        username:
+          type: string
+        role:
+          type: integer
+          enum: [0, 1]
+
+    CurrencyCreate:
+      type: object
+      required: [iso_code, name, country]
+      properties:
+        iso_code:
+          type: string
+        name:
+          type: string
+        country:
+          type: string
+        symbol:
+          type: string
+        is_active:
+          type: boolean
+
+    CurrencyUpdate:
+      type: object
+      properties:
+        iso_code:
+          type: string
+        name:
+          type: string
+        country:
+          type: string
+        symbol:
+          type: string
+        is_active:
+          type: boolean
