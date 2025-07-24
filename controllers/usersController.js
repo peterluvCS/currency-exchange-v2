@@ -9,9 +9,30 @@ exports.createUser = (req, res) => {
 exports.getUserById = (req, res) => {
   res.send('getUserById');
 };
+const userModel = require('../models/userModel');
 
-exports.updateUserById = (req, res) => {
-  res.send('updateUserById');
+// PUT /users/:id
+exports.updateUserById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { email, password_hash, username, role } = req.body;
+
+    
+    if (!email && !password_hash && !username && !role) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    const result = await userModel.update(id, { email, password_hash, username, role });
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'User not found or no fields updated' });
+    }
+
+    res.json({ message: `User ${id} updated successfully` });
+  } catch (err) {
+    console.error('User update error:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
 };
 
 exports.deleteUserById = (req, res) => {
