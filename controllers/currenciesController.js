@@ -1,3 +1,5 @@
+const currencyModel = require("../models/currencyModel");
+
 exports.getAllCurrencies = (req, res) => {
   res.send('getAllCurrencies');
 };
@@ -19,7 +21,7 @@ exports.deleteCurrencyById = async (req, res) => {
   if (isNaN(id)) {
     return res.status(400).json({message: 'Invalid ID format!'});
   }
-  const [results] = await db.query('DELETE FROM currencies WHERE id = ?', [id]);
+  const results = currencyModel.deleteCurrencyById(id);
   if (results.affectedRows === 0) {
     return res.status(404).json({message: 'Delete failed'})
   }
