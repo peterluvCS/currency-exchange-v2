@@ -1,3 +1,4 @@
+const db = require('../db');
 exports.getAllUsers = (req, res) => {
   res.send('getAllUsers');
 };
@@ -14,7 +15,15 @@ exports.updateUserById = (req, res) => {
   res.send('updateUserById');
 };
 
-exports.deleteUserById = (req, res) => {
+exports.deleteUserById = async (req, res) => {
+  const id = req.params.id;
+  if (isNaN(id)) {
+    return res.status(400).json({message: 'Invalid ID format!'});
+  }
+  const [results] = await db.query('DELETE FROM users WHERE id = ?', [id]);
+  if (results.affectedRows === 0) {
+    return res.status(404).json({message: 'Delete failed'})
+  }
   res.send('deleteUserById');
 };
 
