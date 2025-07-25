@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>货币管理</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      margin: 0;
+      padding: 2rem 1rem;
+      background: linear-gradient(135deg, #72e2a6, #b6f2d7);
+      min-height: 100vh;
+      color: #2d2d2d;
+    }
+
+    .page-wrapper {
+      display: flex;
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      align-items: flex-start;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* 表格区域 */
+    .table-container {
+      background: #fff;
+      padding: 1.5rem 2rem;
+      border-radius: 20px;
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15);
+      flex: 1 1 600px;
+      min-width: 320px;
+      max-height: 600px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .table-container h2 {
+      margin: 0 0 1rem 0;
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: #117a37;
+      letter-spacing: 0.05em;
+      text-align: center;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid #ccc;
+      text-align: center;
+      font-size: 0.95rem;
+      user-select: text;
+    }
+
+    th {
+      background-color: #a7d1a3;
+      color: #2d2d2d;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    /* 表单区域 */
+    .form-container {
+      background: #fff;
+      padding: 2rem 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15);
+      width: 380px;
+      max-width: 95vw;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      text-align: center;
+    }
+
+    .form-container h2 {
+      margin: 0 0 1.25rem 0;
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #117a37;
+      letter-spacing: 0.05em;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      text-align: left;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: #333;
+      user-select: none;
+    }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.8px solid #a7d1a3;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      outline-offset: 2px;
+    }
+
+    input[type="text"]:focus,
+    select:focus {
+      border-color: #3bb143;
+      box-shadow: 0 0 6px #4caf5080;
+    }
+
+    button {
+      margin-top: 0.8rem;
+      padding: 14px 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #28a745, #1e7e34);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(39, 174, 96, 0.45);
+      transition: background 0.35s ease, box-shadow 0.35s ease;
+      user-select: none;
+    }
+
+    button:hover,
+    button:focus {
+      background: linear-gradient(90deg, #1e7e34, #28a745);
+      box-shadow: 0 8px 24px rgba(39, 174, 96, 0.7);
+    }
+
+    #result {
+      margin-top: 1rem;
+      min-height: 24px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #2c6a2c;
+      user-select: text;
+      white-space: pre-wrap;
+      word-break: break-word;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrapper">
+    <!-- 表格区域 -->
+    <section class="table-container" aria-label="货币列表">
+      <h2>数据库货币表</h2>
+      <table id="currencyTable" role="grid" aria-readonly="true">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ISO代码</th>
+            <th>名称</th>
+            <th>国家</th>
+            <th>符号</th>
+            <th>是否启用</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 这里由JS动态生成 -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 表单区域 -->
+    <section class="form-container">
+      <h2>更新货币信息</h2>
+      <form id="updateForm" autocomplete="off" spellcheck="false">
+        <label for="currencyId">货币 ID:</label>
+        <input type="text" id="currencyId" required placeholder="请输入货币ID" />
+
+        <label for="iso">ISO 代码:</label>
+        <input type="text" id="iso" required placeholder="如 USD, CNY" />
+
+        <label for="name">名称:</label>
+        <input type="text" id="name" required placeholder="货币名称" />
+
+        <label for="country">国家:</label>
+        <input type="text" id="country" required placeholder="所属国家" />
+
+        <label for="symbol">符号:</label>
+        <input type="text" id="symbol" required placeholder="如 $, ¥" />
+
+        <label for="active">是否启用:</label>
+        <select id="active" required>
+          <option value="true">启用</option>
+          <option value="false">禁用</option>
+        </select>
+
+        <button type="submit">更新</button>
+      </form>
+
+      <div id="result" aria-live="polite" aria-atomic="true"></div>
+    </section>
+  </div>
+
+  <script>
+    async function loadCurrencies() {
+      try {
+        const res = await fetch('/api/currencies');
+        if (!res.ok) throw new Error(`HTTP 错误，状态码：${res.status}`);
+        const currencies = await res.json();
+        const tbody = document.querySelector("#currencyTable tbody");
+        tbody.innerHTML = ""; // 清空旧内容
+
+        currencies.forEach(c => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${c.id ?? c.currencyId ?? ''}</td>
+            <td>${c.iso_code}</td>
+            <td>${c.name}</td>
+            <td>${c.country}</td>
+            <td>${c.symbol}</td>
+            <td>${c.is_active ? "启用" : "禁用"}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error("加载货币数据失败:", err);
+        const tbody = document.querySelector("#currencyTable tbody");
+        tbody.innerHTML = `<tr><td colspan="6" style="color:red;">加载失败：${err.message}</td></tr>`;
+      }
+    }
+
+    document.getElementById("updateForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const id = document.getElementById("currencyId").value.trim();
+      const iso_code = document.getElementById("iso").value.trim();
+      const name = document.getElementById("name").value.trim();
+      const country = document.getElementById("country").value.trim();
+      const symbol = document.getElementById("symbol").value.trim();
+      const is_active = document.getElementById("active").value === "true";
+
+      const resultDiv = document.getElementById("result");
+      resultDiv.textContent = "请求中，请稍候...";
+
+      try {
+        const response = await fetch(`/api/currencies/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ iso_code, name, country, symbol, is_active }),
+        });
+
+        const text = await response.text();
+        try {
+          const data = JSON.parse(text);
+          resultDiv.textContent = "更新成功！\n" + JSON.stringify(data, null, 2);
+          // 更新表格
+          await loadCurrencies();
+        } catch {
+          resultDiv.textContent = "返回的不是有效JSON：\n" + text;
+        }
+      } catch (err) {
+        resultDiv.textContent = "请求失败：" + err.message;
+      }
+    });
+
+    // 页面加载时自动拉取货币数据
+    loadCurrencies();
+  </script>
+</body>
+</html>

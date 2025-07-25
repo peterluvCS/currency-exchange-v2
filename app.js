@@ -4,6 +4,9 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
+// 提供静态文件服务 (public 文件夹)
+app.use(express.static('public'));
+
 // 路由
 const userRoutes = require('./routes/users');
 const currencyRoutes = require('./routes/currencies');
