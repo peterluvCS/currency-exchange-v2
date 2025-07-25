@@ -75,7 +75,13 @@ exports.updateUserById = async (req, res) => {
   }
 };
 
-exports.deleteUserById = (req, res) => {
+exports.deleteUserById = async (req, res) => {
+  const id = req.params.id;
+  if (isNaN(id)) {
+    return res.status(400).json({message: 'Invalid ID format!'});
+  }
+  const results = await userModel.deleteUserById(id);
+  
   res.send('deleteUserById');
 };
 

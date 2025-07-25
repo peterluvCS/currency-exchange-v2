@@ -62,10 +62,16 @@ exports.updateCurrencyById = async (req, res) => {
 };
 
 
+exports.deleteCurrencyById = async (req, res) => {
+  const id = req.params.id;
+  if (isNaN(id)) {
+    return res.status(400).json({message: 'Invalid ID format!'});
+  }
+  const results = currencyModel.deleteCurrencyById(id);
+  if (results.affectedRows === 0) {
+    return res.status(404).json({message: 'Delete failed'})
+  }
 
-exports.deleteCurrencyById = (req, res) => {
-  res.send('deleteCurrencyById');
-};
 
 
 exports.searchCurrencies = async (req, res) => {
