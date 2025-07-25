@@ -36,6 +36,16 @@ exports.getCurrencyById = async (req, res) => {
     }
   };
 
+exports.getAllCurrencies = async (req, res) => {
+  try {
+    const currencies = await currencyModel.getAll();
+    res.json(currencies);  // 返回JSON数组
+  } catch (err) {
+    console.error('查询货币列表出错:', err);
+    res.status(500).json({ error: '数据库查询错误' });
+  }
+};
+
 // PUT /currencies/:id
 const currencyModel = require('../models/currencyModel');
 

@@ -40,7 +40,13 @@ const currencyModel = {
     values.push(currencyId);
     const sql = `UPDATE currencies SET ${fields.join(', ')} WHERE id = ?`;
     return pool.query(sql, values);
-  }
+  },
+  
+  async getAll() {
+    const sql = 'SELECT id, iso_code, name, country, symbol, is_active FROM currencies ORDER BY id ASC';
+    const [rows] = await pool.query(sql);
+    return rows;
+  },
   
   // Get all currencies
   async getAllCurrencies() {
@@ -67,6 +73,7 @@ const currencyModel = {
 
 };
 
+
 async function searchCurrencies(keyword) {
   const lowerKeyword = `%${keyword.toLowerCase()}%`;
 
@@ -88,3 +95,4 @@ module.exports = {
   currencyModel,
   searchCurrencies
 }; 
+
