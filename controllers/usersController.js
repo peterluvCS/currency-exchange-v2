@@ -36,4 +36,16 @@ exports.deleteUserById = (req, res) => {
 
 exports.searchUsers = (req, res) => {
   res.send('searchUsers');
-}; 
+};
+
+exports.searchUsers = async (req, res) => {
+  const keyword = req.query.keyword || '';
+
+  try {
+    const users = await userModel.searchUsers(keyword);
+    res.json(users);
+  } catch (error) {
+    console.error('Error searching users:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
