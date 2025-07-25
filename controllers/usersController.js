@@ -9,9 +9,33 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
-exports.createUser = (req, res) => {
-  res.send('createUser');
+
+const userModel = require('../models/userModel');
+
+exports.createUser = async (req, res) => {
+  try {
+    const { email, password_hash, username, role } = req.body;
+
+    // Validation
+    if (!email || !password_hash || !username) {
+      return res.status(400).json({ error: 'email, password_hash, and username are required' });
+    }
+
+    const result = await userModel.createUser({ email, password_hash, username, role });
+
+    res.status(201).json({
+      message: 'User created successfully',
+      userId: result.userId
+    });
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.status(409).json({ error: 'Email or username already exists' });
+    }
+    console.error('Create user error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 };
+
 
 exports.getUserById = async (req, res) => {
     try {
@@ -25,9 +49,30 @@ exports.getUserById = async (req, res) => {
       res.status(500).json({ error: 'Failed to get user', detail: err.message });
     }
 };
+const userModel = require('../models/userModel');
 
-exports.updateUserById = (req, res) => {
-  res.send('updateUserById');
+// PUT /users/:id
+exports.updateUserById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { email, password_hash, username, role } = req.body;
+
+    
+    if (!email && !password_hash && !username && !role) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    const result = await userModel.update(id, { email, password_hash, username, role });
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'User not found or no fields updated' });
+    }
+
+    res.json({ message: `User ${id} updated successfully` });
+  } catch (err) {
+    console.error('User update error:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
 };
 
 exports.deleteUserById = async (req, res) => {
@@ -38,10 +83,6 @@ exports.deleteUserById = async (req, res) => {
   const results = await userModel.deleteUserById(id);
   
   res.send('deleteUserById');
-};
-
-exports.searchUsers = (req, res) => {
-  res.send('searchUsers');
 };
 
 exports.searchUsers = async (req, res) => {

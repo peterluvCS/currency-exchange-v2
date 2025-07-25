@@ -36,9 +36,31 @@ exports.getCurrencyById = async (req, res) => {
     }
   };
 
-exports.updateCurrencyById = (req, res) => {
-  res.send('updateCurrencyById');
+// PUT /currencies/:id
+const currencyModel = require('../models/currencyModel');
+
+exports.updateCurrencyById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { iso_code, name, country, symbol, is_active } = req.body;
+
+    if (!iso_code || !name || !country || !symbol || !(typeof is_active === 'boolean')) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const result = await currencyModel.update(id, { iso_code, name, country, symbol, is_active });
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Currency not found' });
+    }
+
+    res.json({ message: `Currency ${id} updated successfully` });
+  } catch (err) {
+    console.error('Update error:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
 };
+
 
 exports.deleteCurrencyById = async (req, res) => {
   const id = req.params.id;
@@ -49,8 +71,7 @@ exports.deleteCurrencyById = async (req, res) => {
   if (results.affectedRows === 0) {
     return res.status(404).json({message: 'Delete failed'})
   }
-  res.send('deleteCurrencyById');
-};
+
 
 
 exports.searchCurrencies = async (req, res) => {
