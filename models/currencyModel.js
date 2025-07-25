@@ -7,6 +7,7 @@ function isValidString(str) {
 }
 
 const currencyModel = {
+
   async update(currencyId, currencyData) {
     const fields = [];
     const values = [];
@@ -40,6 +41,50 @@ const currencyModel = {
     const sql = `UPDATE currencies SET ${fields.join(', ')} WHERE id = ?`;
     return pool.query(sql, values);
   }
+  
+  // Get all currencies
+  async getAllCurrencies() {
+    const [rows] = await pool.query('SELECT iso_code, name, country, symbol, is_active FROM currencies');
+    return rows;
+  },
+
+  // Get a currency by id
+  async getCurrencyById(id) {
+    const [rows] = await pool.query(
+        'SELECT iso_code, name, country, symbol, is_active FROM currencies WHERE id = ?',
+        [id]
+      );
+    return rows[0];
+  },
+  addCurrency: async (iso_code, name, country, symbol, is_active = true) => {
+    const query = `
+      INSERT INTO currencies (iso_code, name, country, symbol, is_active)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    const [result] = await pool.query(query, [iso_code, name, country, symbol, is_active]);
+    return result.insertId; // 返回新插入记录的ID
+  }
+
 };
 
-module.exports = currencyModel; 
+async function searchCurrencies(keyword) {
+  const lowerKeyword = `%${keyword.toLowerCase()}%`;
+
+  const [rows] = await pool.query(
+    `
+    SELECT * FROM currencies
+    WHERE 
+      LOWER(iso_code) LIKE ? OR
+      LOWER(name) LIKE ? OR
+      LOWER(country) LIKE ?
+    `,
+    [lowerKeyword, lowerKeyword, lowerKeyword]
+  );
+
+  return rows;
+}
+
+module.exports = {
+  currencyModel,
+  searchCurrencies
+}; 
